@@ -2,10 +2,10 @@ name: circle_wheel_scroll
 description: Circle Wheel List View for flutter based on ListWheelScrollView by flutter team.
 version: 0.0.1
 author:
-homepage:
+homepage: https://github.com/DenisBogatirov/circle_wheel_scroll
 
 environment:
-  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+  sdk: ">=2.0.0 <3.0.0"
 
 dependencies:
   flutter:
