@@ -1,16 +1,3 @@
-# Circle Wheel Scroll View packege
-
-Modified version of original [ListWheelScrollView](https://docs.flutter.io/flutter/widgets/ListWheelScrollView-class.html) to create effect of scroling on circle.
-
-![](preview.gif)
-
-## Usage
-
-To use plugin, just import package `import 'package:circle_wheel_scroll/circle_wheel_scroll_view.dart';`
-
-## Example
-
-```
 import 'package:flutter/material.dart';
 
 import 'package:circle_wheel_scroll/circle_wheel_scroll_view.dart';
@@ -38,7 +25,7 @@ class WheelExample extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Wheel'),
+        title: Text('Wheel example'),
       ),
       body: SafeArea(
         child: Center(
@@ -47,10 +34,11 @@ class WheelExample extends StatelessWidget {
             // width: 160,
             child: CircleListScrollView(
               physics: CircleFixedExtentScrollPhysics(),
-              axis: Axis.horizontal,
+              axis: Axis.vertical,
               itemExtent: 80,
               children: List.generate(20, _buildItem),
               radius: MediaQuery.of(context).size.width * 0.6,
+              onSelectedItemChanged: (int index) => print('Current index: $index'),
             ),
           ),
         ),
@@ -74,4 +62,3 @@ class MyApp extends StatelessWidget {
 }
 
 void main() => runApp(MyApp());
-```
