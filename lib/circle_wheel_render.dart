@@ -26,7 +26,7 @@ abstract class CircleListChildManager {
   /// If null, then there's no explicit limits to the range of the children
   /// except that it has to be contiguous. If [childExistsAt] for a certain
   /// index returns false, that index is already past the limit.
-  int get childCount;
+  int? get childCount;
 
   /// Checks whether the delegate is able to provide a child widget at the given
   /// index.
@@ -40,16 +40,16 @@ abstract class CircleListChildManager {
   /// nothing.
   ///
   /// It is possible to create children with negative indices.
-  void createChild(int index, {@required RenderBox after});
+  void createChild(int index, {required RenderBox? after});
 
   /// Removes the child element corresponding with the given RenderBox.
-  void removeChild(RenderBox child);
+  void removeChild(RenderBox? child);
 }
 
 /// [ParentData] for use with [RenderCircleListViewport].
 class CircleListParentData extends ContainerBoxParentData<RenderBox> {
   /// Index of this child in its parent's child list.
-  int index;
+  int? index;
 }
 
 /// Render, onto a wheel, a bigger sequential set of objects inside this viewport.
@@ -131,14 +131,14 @@ class RenderCircleListViewport
   ///
   /// All arguments must not be null. Optional arguments have reasonable defaults.
   RenderCircleListViewport({
-    @required this.childManager,
-    @required ViewportOffset offset,
-    @required double itemExtent,
-    @required Axis axis,
+    required this.childManager,
+    required ViewportOffset offset,
+    required double itemExtent,
+    required Axis axis,
     double radius = 100, 
     bool clipToSize = true,
     bool renderChildrenOutsideViewport = false,
-    List<RenderBox> children,
+    List<RenderBox>? children,
   }) : assert(childManager != null),
        assert(offset != null),
        assert(itemExtent != null),
@@ -330,7 +330,7 @@ class RenderCircleListViewport
     if (childManager.childCount == null)
       return double.infinity;
 
-    return math.max(0.0, (childManager.childCount - 1) * _itemExtent);
+    return math.max(0.0, (childManager.childCount! - 1) * _itemExtent);
   }
 
   /// Scroll extent distance in the untransformed plane between the center
@@ -354,7 +354,7 @@ class RenderCircleListViewport
 
   double _getIntrinsicCrossAxis(_ChildSizingFunction childSize) {
     double extent = 0.0;
-    RenderBox child = firstChild;
+    RenderBox? child = firstChild;
     while (child != null) {
       extent = math.max(extent, childSize(child));
       child = childAfter(child);
@@ -368,7 +368,7 @@ class RenderCircleListViewport
       if (childManager.childCount == null) {
         return 0.0;
       }
-      return childManager.childCount * _itemExtent;
+      return childManager.childCount! * _itemExtent;
     }
 
     return _getIntrinsicCrossAxis(
@@ -382,7 +382,7 @@ class RenderCircleListViewport
       if (childManager.childCount == null) {
         return 0.0;
       }
-      return childManager.childCount * _itemExtent;
+      return childManager.childCount! * _itemExtent;
     }
 
     return _getIntrinsicCrossAxis(
@@ -396,7 +396,7 @@ class RenderCircleListViewport
       if (childManager.childCount == null) {
         return 0.0;
       }
-      return childManager.childCount * _itemExtent;
+      return childManager.childCount! * _itemExtent;
     }
 
     return _getIntrinsicCrossAxis(
@@ -410,7 +410,7 @@ class RenderCircleListViewport
       if (childManager.childCount == null) {
         return 0.0;
       }
-      return childManager.childCount * _itemExtent;
+      return childManager.childCount! * _itemExtent;
     }
 
     return _getIntrinsicCrossAxis(
@@ -427,9 +427,9 @@ class RenderCircleListViewport
   }
 
   /// Gets the index of a child by looking at its parentData.
-  int indexOf(RenderBox child) {
+  int? indexOf(RenderBox child) {
     assert(child != null);
-    final CircleListParentData childParentData = child.parentData;
+    final CircleListParentData childParentData = child.parentData as CircleListParentData;
     assert(childParentData.index != null);
     return childParentData.index;
   }
@@ -440,14 +440,14 @@ class RenderCircleListViewport
   /// Returns the scroll offset of the child with the given index.
   double indexToScrollOffset(int index) => index * itemExtent;
 
-  void _createChild(int index, {RenderBox after}) {
+  void _createChild(int index, {RenderBox? after}) {
     invokeLayoutCallback<BoxConstraints>((BoxConstraints constraints) {
       assert(constraints == this.constraints);
       childManager.createChild(index, after: after);
     });
   }
 
-  void _destroyChild(RenderBox child) {
+  void _destroyChild(RenderBox? child) {
     invokeLayoutCallback<BoxConstraints>((BoxConstraints constraints) {
       assert(constraints == this.constraints);
       childManager.removeChild(child);
@@ -456,15 +456,15 @@ class RenderCircleListViewport
 
   void _layoutChild(RenderBox child, BoxConstraints constraints, int index) {
     child.layout(constraints, parentUsesSize: true);
-    final CircleListParentData childParentData = child.parentData;
+    final CircleListParentData? childParentData = child.parentData as CircleListParentData?;
     // Centers the child horizontally.
 
     if (axis == Axis.horizontal) {
       final double crossPosition = size.height / 2.0 - child.size.height / 2.0;
-      childParentData.offset = Offset(indexToScrollOffset(index), crossPosition);
+      childParentData!.offset = Offset(indexToScrollOffset(index), crossPosition);
     } else {
       final double crossPosition = size.width / 2.0 - child.size.width / 2.0;
-      childParentData.offset = Offset(crossPosition, indexToScrollOffset(index));
+      childParentData!.offset = Offset(crossPosition, indexToScrollOffset(index));
     }
   }
 
@@ -532,7 +532,7 @@ class RenderCircleListViewport
 
     // Case when there is no intersection.
     if (childCount > 0 &&
-        (indexOf(firstChild) > targetLastIndex || indexOf(lastChild) < targetFirstIndex)) {
+        (indexOf(firstChild!)! > targetLastIndex || indexOf(lastChild!)! < targetFirstIndex)) {
       while (firstChild != null)
         _destroyChild(firstChild);
     }
@@ -541,11 +541,11 @@ class RenderCircleListViewport
     // target range.
     if (childCount == 0) {
       _createChild(targetFirstIndex);
-      _layoutChild(firstChild, childConstraints, targetFirstIndex);
+      _layoutChild(firstChild!, childConstraints, targetFirstIndex);
     }
 
-    int currentFirstIndex = indexOf(firstChild);
-    int currentLastIndex = indexOf(lastChild);
+    int currentFirstIndex = indexOf(firstChild!)!;
+    int currentLastIndex = indexOf(lastChild!)!;
 
     // Remove all unnecessary children by shortening the current child list, in
     // both directions.
@@ -559,7 +559,7 @@ class RenderCircleListViewport
     }
 
     // Relayout all active children.
-    RenderBox child = firstChild;
+    RenderBox? child = firstChild;
     while (child != null) {
       child.layout(childConstraints, parentUsesSize: true);
       child = childAfter(child);
@@ -568,11 +568,11 @@ class RenderCircleListViewport
     // Spawning new children that are actually visible but not in child list yet.
     while (currentFirstIndex > targetFirstIndex) {
       _createChild(currentFirstIndex - 1);
-      _layoutChild(firstChild, childConstraints, --currentFirstIndex);
+      _layoutChild(firstChild!, childConstraints, --currentFirstIndex);
     }
     while (currentLastIndex < targetLastIndex) {
       _createChild(currentLastIndex + 1, after: lastChild);
-      _layoutChild(lastChild, childConstraints, ++currentLastIndex);
+      _layoutChild(lastChild!, childConstraints, ++currentLastIndex);
     }
 
     offset.applyViewportDimension(_viewportExtent);
@@ -616,20 +616,20 @@ class RenderCircleListViewport
 
   /// Paints all children visible in the current viewport.
   void _paintVisibleChildren(PaintingContext context, Offset offset) {
-    RenderBox childToPaint = firstChild;
-    CircleListParentData childParentData = childToPaint?.parentData;
+    RenderBox? childToPaint = firstChild;
+    CircleListParentData? childParentData = childToPaint?.parentData as CircleListParentData?;
 
     while (childParentData != null) {
       _paintTransformedChild(childToPaint, context, offset, childParentData.offset);
-      childToPaint = childAfter(childToPaint);
-      childParentData = childToPaint?.parentData;
+      childToPaint = childAfter(childToPaint!);
+      childParentData = childToPaint?.parentData as CircleListParentData?;
     }
   }
 
   /// Takes in a child with a **scrollable layout offset** and paints it in the
   /// **transformed cylindrical space viewport painting coordinates**.
   void _paintTransformedChild(
-    RenderBox child,
+    RenderBox? child,
     PaintingContext context,
     Offset offset,
     Offset layoutOffset,
@@ -644,7 +644,7 @@ class RenderCircleListViewport
 
     final fractional = ((_mainAxisSize/2) - (mainCordinate + _itemExtent / 2.0)) / (_mainAxisSize/2);
 
-    double angle;
+    double? angle;
 
     if (axis == Axis.horizontal) {
       angle = lerpDouble(-math.pi/2, -math.pi, fractional);
@@ -652,7 +652,7 @@ class RenderCircleListViewport
       angle = lerpDouble(0, -math.pi/2, fractional);
     }
 
-    final circleOffset = Offset(radius * math.cos(angle), radius * math.sin(angle));
+    final circleOffset = Offset(radius * math.cos(angle!), radius * math.sin(angle));
 
     final Matrix4 circleTransform = Matrix4.translationValues(
       axis == Axis.vertical ? circleOffset.dx - radius : circleOffset.dx,
@@ -682,7 +682,7 @@ class RenderCircleListViewport
   void _paintChild(
       PaintingContext context,
       Offset offset,
-      RenderBox child,
+      RenderBox? child,
       Matrix4 circleTransform,
       Offset offsetToCenter,
   ) {
@@ -695,7 +695,7 @@ class RenderCircleListViewport
       // Pre-transform painting function.
       (PaintingContext context, Offset offset) {
         context.paintChild(
-          child,
+          child!,
           // Paint everything in the center (e.g. angle = 0), then transform.
           offset + offsetToCenter,
         );
@@ -707,16 +707,16 @@ class RenderCircleListViewport
   /// painting coordinates** system.
   @override
   void applyPaintTransform(RenderBox child, Matrix4 transform) {
-    final CircleListParentData parentData = child?.parentData;
+    final CircleListParentData? parentData = child.parentData as CircleListParentData?;
     if (axis == Axis.vertical) {
-      transform.translate(0.0, _getUntransformedPaintingCoordinate(parentData.offset.dy));
+      transform.translate(0.0, _getUntransformedPaintingCoordinate(parentData!.offset.dy));
     } else {
-      transform.translate(_getUntransformedPaintingCoordinate(parentData.offset.dx), 0.0);
+      transform.translate(_getUntransformedPaintingCoordinate(parentData!.offset.dx), 0.0);
     }
   }
 
   @override
-  Rect describeApproximatePaintClip(RenderObject child) {
+  Rect? describeApproximatePaintClip(RenderObject child) {
     if (child != null && _shouldClipAtCurrentOffset()) {
       return Offset.zero & size;
     }
@@ -724,12 +724,12 @@ class RenderCircleListViewport
   }
 
   @override
-  bool hitTestChildren(HitTestResult result, { Offset position }) {
+  bool hitTestChildren(HitTestResult result, { Offset? position }) {
     return false;
   }
 
   @override
-  RevealedOffset getOffsetToReveal(RenderObject target, double alignment, {Rect rect}) {
+  RevealedOffset getOffsetToReveal(RenderObject target, double alignment, {Rect? rect}) {
     // `target` is only fully revealed when in the selected/center position. Therefore,
     // this method always returns the offset that shows `target` in the center position,
     // which is the same offset for all `alignment` values.
@@ -739,10 +739,10 @@ class RenderCircleListViewport
     // `child` will be the last RenderObject before the viewport when walking up from `target`.
     RenderObject child = target;
     while (child.parent != this)
-      child = child.parent;
+      child = child.parent as RenderObject;
 
-    final CircleListParentData parentData = child.parentData;
-    final double targetOffset = axis == Axis.horizontal ? parentData.offset.dx : parentData.offset.dy; // the so-called "centerPosition"
+    final CircleListParentData? parentData = child.parentData as CircleListParentData?;
+    final double targetOffset = axis == Axis.horizontal ? parentData!.offset.dx : parentData!.offset.dy; // the so-called "centerPosition"
 
     final Matrix4 transform = target.getTransformTo(this);
     final Rect bounds = MatrixUtils.transformRect(transform, rect);
@@ -756,8 +756,8 @@ class RenderCircleListViewport
 
   @override
   void showOnScreen({
-    RenderObject descendant,
-    Rect rect,
+    RenderObject? descendant,
+    Rect? rect,
     Duration duration = Duration.zero,
     Curve curve = Curves.ease,
   }) {
