@@ -38,7 +38,8 @@ class WheelExample extends StatelessWidget {
               itemExtent: 80,
               children: List.generate(20, _buildItem),
               radius: MediaQuery.of(context).size.width * 0.6,
-              onSelectedItemChanged: (int index) => print('Current index: $index'),
+              onSelectedItemChanged: (int index) =>
+                  print('Current index: $index'),
             ),
           ),
         ),
@@ -46,7 +47,6 @@ class WheelExample extends StatelessWidget {
     );
   }
 }
-
 
 class MyApp extends StatelessWidget {
   @override
