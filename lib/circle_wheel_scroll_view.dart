@@ -4,6 +4,7 @@
 import 'dart:async';
 import 'dart:collection';
 import 'dart:math' as math;
+import 'dart:ui';
 
 import 'package:flutter/physics.dart';
 import 'package:flutter/rendering.dart';
@@ -306,12 +307,14 @@ class FixedExtentMetrics extends FixedScrollMetrics {
     required double viewportDimension,
     required AxisDirection axisDirection,
     required this.itemIndex,
+    required this.devicePixelRatio,
   }) : super(
           minScrollExtent: minScrollExtent,
           maxScrollExtent: maxScrollExtent,
           pixels: pixels,
           viewportDimension: viewportDimension,
           axisDirection: axisDirection,
+          devicePixelRatio: devicePixelRatio,
         );
 
   @override
@@ -322,6 +325,7 @@ class FixedExtentMetrics extends FixedScrollMetrics {
     double? viewportDimension,
     AxisDirection? axisDirection,
     int? itemIndex,
+    double? devicePixelRatio,
   }) {
     return FixedExtentMetrics(
       minScrollExtent: minScrollExtent ?? this.minScrollExtent,
@@ -330,11 +334,15 @@ class FixedExtentMetrics extends FixedScrollMetrics {
       viewportDimension: viewportDimension ?? this.viewportDimension,
       axisDirection: axisDirection ?? this.axisDirection,
       itemIndex: itemIndex ?? this.itemIndex,
+      devicePixelRatio: devicePixelRatio ?? this.devicePixelRatio,
     );
   }
 
   /// The scroll view's currently selected item index.
   final int itemIndex;
+
+  /// The [FlutterView.devicePixelRatio] of the view that the [Scrollable].
+  final double devicePixelRatio;
 }
 
 int _getItemFromOffset({
@@ -402,6 +410,7 @@ class _FixedExtentScrollPosition extends ScrollPositionWithSingleContext
     double? viewportDimension,
     AxisDirection? axisDirection,
     int? itemIndex,
+    double? devicePixelRatio,
   }) {
     return FixedExtentMetrics(
       minScrollExtent: minScrollExtent ?? this.minScrollExtent,
@@ -410,6 +419,7 @@ class _FixedExtentScrollPosition extends ScrollPositionWithSingleContext
       viewportDimension: viewportDimension ?? this.viewportDimension,
       axisDirection: axisDirection ?? this.axisDirection,
       itemIndex: itemIndex ?? this.itemIndex,
+      devicePixelRatio: devicePixelRatio ?? this.devicePixelRatio,
     );
   }
 }
