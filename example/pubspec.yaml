@@ -1,16 +1,18 @@
 name: example
-description: A new Flutter project.
+description: An example project.
+publish_to: "none"
 
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.0.0-dev.68.0 <3.0.0"
+  sdk: ">=3.0.0 <4.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
-  cupertino_icons: ^0.1.2
-  circle_wheel_scroll: ^0.0.1
+  cupertino_icons: ^1.0.5
+  circle_wheel_scroll:
+    path: ../
 
 dev_dependencies:
   flutter_test:
