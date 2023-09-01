@@ -454,11 +454,11 @@ class RenderCircleListViewport extends RenderBox
   /// by [childManager].
   @override
   void performLayout() {
-    final BoxConstraints childConstraints = constraints.copyWith(
-      minHeight: _itemExtent,
-      maxHeight: _itemExtent,
-      minWidth: 0.0,
-    );
+    // Apply the dimensions first in case it changes the scroll offset which
+    // determines what should be shown.
+    offset.applyViewportDimension(_viewportExtent);
+    offset.applyContentDimensions(
+        _minEstimatedScrollExtent, _maxEstimatedScrollExtent);
 
     // The height, in pixel, that children will be visible and might be laid out
     // and painted.
@@ -508,6 +508,12 @@ class RenderCircleListViewport extends RenderBox
       while (firstChild != null) _destroyChild(firstChild);
     }
 
+    final BoxConstraints childConstraints = constraints.copyWith(
+      minHeight: _itemExtent,
+      maxHeight: _itemExtent,
+      minWidth: 0.0,
+    );
+
     // If there is no child at this stage, we add the first one that is in
     // target range.
     if (childCount == 0) {
@@ -545,8 +551,6 @@ class RenderCircleListViewport extends RenderBox
       _createChild(currentLastIndex + 1, after: lastChild);
       _layoutChild(lastChild!, childConstraints, ++currentLastIndex);
     }
-
-    offset.applyViewportDimension(_viewportExtent);
 
     // Applying content dimensions bases on how the childManager builds widgets:
     // if it is available to provide a child just out of target range, then
