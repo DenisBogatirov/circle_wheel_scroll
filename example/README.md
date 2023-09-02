@@ -1,5 +1,3 @@
-# Example for circle_wheel_scroll flutter package
+# example
 
-## Run
-
-Run as usuall flutter package
+A new Flutter project.
