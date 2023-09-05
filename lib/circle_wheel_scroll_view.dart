@@ -254,8 +254,7 @@ class FixedExtentScrollController extends ScrollController {
     }
 
     final List<Future<void>> futures = <Future<void>>[];
-    for (_FixedExtentScrollPosition position
-        in positions as Iterable<_FixedExtentScrollPosition>) {
+    for (_FixedExtentScrollPosition position in positions as List<dynamic>) {
       futures.add(position.animateTo(
         itemIndex * position.itemExtent,
         duration: duration,
@@ -270,8 +269,7 @@ class FixedExtentScrollController extends ScrollController {
   /// Jumps the item index position from its current value to the given value,
   /// without animation, and without checking if the new value is in range.
   void jumpToItem(int itemIndex) {
-    for (_FixedExtentScrollPosition position
-        in positions as Iterable<_FixedExtentScrollPosition>) {
+    for (_FixedExtentScrollPosition position in positions as List<dynamic>) {
       position.jumpTo(itemIndex * position.itemExtent);
     }
   }
